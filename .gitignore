@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / compressed files
+__pycache__/
+*.py[cod]
+$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# IDE/editor-specific files
+.idea/  # JetBrains IDEs (PyCharm, etc.)
+.vscode/ # VS Code
+*.swp # vim
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Documentation files
+docs/_build/
+
+# Jupyter Notebook checkpointing
+.ipynb_checkpoints
+
+# Misc files
+.coverage
+*.sqlite3
+instance/
