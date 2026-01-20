@@ -32,3 +32,31 @@ def criar():
 
 
     return dados
+
+
+
+@marca_bp.route('/all', methods=['GET'])
+def get_marca():
+    sql_query = text("SELECT * FROM marcas ") #filtro para no max 100 pg
+    
+    try:
+        #result sem dados
+        result = db.session.execute(sql_query)
+                
+        relatorio = result.mappings().all()
+        json = [dict(row) for row in relatorio] #Gambi pq cada linha é um objeto
+
+
+        print(json)
+
+
+        return json
+    except Exception as e:
+        
+        #salvar log da aplicação 
+        #Mandar email programador
+        #nao ta funcionando ainda
+        return e
+
+    
+
