@@ -3,7 +3,7 @@ from sqlalchemy import text
 from flask_sqlalchemy import SQLAlchemy
 
 
-#senha_bp = Blueprint('senha', __name__, url_prefix = '/senha')
+senha_bp = Blueprint('senha', __name__, url_prefix = '/senha')
 #registri-se com email e senha
 @senha_bp.route("/senha", methods=['POST'])
 def senha():
