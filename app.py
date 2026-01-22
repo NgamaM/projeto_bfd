@@ -5,6 +5,7 @@ from conf.database import init_db
 
 #Importar módulos 
 from control.marca import marca_bp
+from control.usuario import usuario_bp
 #from control.produto import produto_bp
 
 
@@ -19,7 +20,7 @@ init_db(app)
 
 #Registro de controladores 
 app.register_blueprint(marca_bp)
-#app.register_blueprint(produto_bp)
+app.register_blueprint(usuario_bp)
 
 
 

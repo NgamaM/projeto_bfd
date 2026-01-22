@@ -8,7 +8,7 @@ marca_bp = Blueprint('categoria', __name__, url_prefix = '/categoria')
 
 # crud categorias
 
-@marca_bp.route("/", methods=["POST"])
+@categoria_bp.route("/", methods=["POST"])
 def criar():
     #dados novos
     nome = request.form.get("nome")
@@ -31,3 +31,26 @@ def criar():
 
 
     return dados
+
+    @categoria_bp.route('/all', methods=['GET'])
+def get_categoria():
+    sql_query = text("SELECT * FROM ategorias ") #filtro para no max 100 pg
+    
+    try:
+        #result sem dados
+        result = db.session.execute(sql_query)
+                
+        relatorio = result.mappings().all()
+        json = [dict(row) for row in relatorio] #Gambi pq cada linha é um objeto
+
+
+        print(json)
+
+
+        return json
+    except Exception as e:
+        
+        #salvar log da aplicação 
+        #Mandar email programador
+        #nao ta funcionando ainda
+        return e
