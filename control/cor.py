@@ -4,20 +4,18 @@ from flask_sqlalchemy import SQLAlchemy
 
 from conf.database import db
 
-marca_bp = Blueprint('marca', __name__, url_prefix = '/marca')
+cor_bp = Blueprint('cor', __name__, url_prefix = '/cor')
 
-
-#altere para outra area se necessário
-#CRUD
-@marca_bp.route("/", methods=["POST"])
-def criar():
-    #dados que vieram
+#CRUD CORES
+@cor_bp.route("/criar", methods=["POST"])
+def create():
+    #dados que vieram do postman
     nome = request.form.get("nome")
     
 
 
     #SQL
-    sql = text("INSERT INTO marcas (nome_marca) VALUES (:nome) RETURNING id")
+    sql = text("INSERT INTO cores (nome_cor) VALUES (:nome) RETURNING id")
     dados = {"nome": nome} #os dados do que veio lá da var sql
 
 
@@ -33,11 +31,10 @@ def criar():
 
     return dados
 
-
-
-@marca_bp.route('/all', methods=['GET'])
-def get_marca():
-    sql_query = text("SELECT * FROM marcas ") #filtro para no max 100 pg
+#ver
+@cor_bp.route("/all", methods=["GET"])
+def get_cor():
+    sql_query = text("SELECT * FROM cores ") #filtro para no max 100 pg
     
     try:
         #result sem dados
@@ -56,15 +53,14 @@ def get_marca():
         #salvar log da aplicação 
         #Mandar email programador
         return e
-
-#atualizar
-@marca_bp.route("/<id>", methods=["PUT"])
+    
+#alterar pelo id
+@cor_bp.route("/<id>", methods=["PUT"])
 def atualizar(id):
-    #dados que vieram postman
     nome = request.form.get("nome")
 
 
-    sql = text("UPDATE marcas SET nome_marca = :nome WHERE id = :id")
+    sql = text("UPDATE cores SET nome_cor = :nome WHERE id = :id")
     dados = {"nome": nome, "id": id} #os dados que veio do bd sql
 
 
@@ -75,14 +71,14 @@ def atualizar(id):
     
     if linhas_afetadas == 1: 
         db.session.commit()
-        return f"marcas com o ID foram {id} atualizadas"
+        return f"cores com o ID foram {id} atualizadas"
     else:
         db.session.rollback()
         return f"problemas ao atualizar dados"
 
 #deletar
-@marca_bp.route("/<id>", methods=['DELETE'])
-def delete(id):
+@cor_bp.route("/<id>", methods=["DELETE"])
+def deletar(id):
     sql = text("DELETE FROM marcas WHERE id = :id")
     dados = {"id": id}
     result = db.session.execute(sql, dados)
@@ -95,5 +91,6 @@ def delete(id):
         return f"marcas com o ID {id} foi removida"
     else:
         db.session.rollback()
-        return f"apagou o que não devia"
-#deletei item 5 do teste put
+        return f"erro ao deletar dados"
+#deletei item 4 do teste criar e put
+

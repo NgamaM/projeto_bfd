@@ -4,21 +4,21 @@ from flask_sqlalchemy import SQLAlchemy
 
 from conf.database import db
 
-marca_bp = Blueprint('marca', __name__, url_prefix = '/marca')
+categoria_bp = Blueprint('categoria', __name__, url_prefix = '/categoria')
 
+# crud categorias
 
-#altere para outra area se necessário
-#CRUD
-@marca_bp.route("/", methods=["POST"])
+@categoria_bp.route("/", methods=["POST"])
 def criar():
-    #dados que vieram
+    #dados novos
     nome = request.form.get("nome")
+    descricao = request.form.get("descrição")
     
 
 
     #SQL
-    sql = text("INSERT INTO marcas (nome_marca) VALUES (:nome) RETURNING id")
-    dados = {"nome": nome} #os dados do que veio lá da var sql
+    sql = text("INSERT INTO categorias (nome_categoria, descricao) VALUES (:nome, :descricao) RETURNING id")
+    dados = {"nome": nome, "descricao": descricao} #para criar nova cateoria
 
 
     #executar consulta
@@ -33,11 +33,9 @@ def criar():
 
     return dados
 
-
-
-@marca_bp.route('/all', methods=['GET'])
-def get_marca():
-    sql_query = text("SELECT * FROM marcas ") #filtro para no max 100 pg
+@categoria_bp.route('/all', methods=['GET'])
+def get_categoria():
+    sql_query = text("SELECT * FROM categorias ") #filtro para no max 100 pg
     
     try:
         #result sem dados
@@ -55,17 +53,18 @@ def get_marca():
         
         #salvar log da aplicação 
         #Mandar email programador
+        #nao ta funcionando ainda
         return e
-
 #atualizar
-@marca_bp.route("/<id>", methods=["PUT"])
+@categoria_bp.route("/<id>", methods=["PUT"])
 def atualizar(id):
     #dados que vieram postman
     nome = request.form.get("nome")
+    descricao = request.form.get("descrição")
 
 
-    sql = text("UPDATE marcas SET nome_marca = :nome WHERE id = :id")
-    dados = {"nome": nome, "id": id} #os dados que veio do bd sql
+    sql = text("UPDATE categorias SET nome_categoria = :nome, descricao= :descricao WHERE id = :id")
+    dados = {"nome": nome, "descricao": descricao, "id": id} #os dados que veio do bd sql
 
 
     result = db.session.execute(sql, dados)
@@ -75,15 +74,14 @@ def atualizar(id):
     
     if linhas_afetadas == 1: 
         db.session.commit()
-        return f"marcas com o ID foram {id} atualizadas"
+        return f"categorias com o ID foram {id} atualizadas"
     else:
         db.session.rollback()
         return f"problemas ao atualizar dados"
 
-#deletar
-@marca_bp.route("/<id>", methods=['DELETE'])
+@categoria_bp.route("/<id>", methods=['DELETE'])
 def delete(id):
-    sql = text("DELETE FROM marcas WHERE id = :id")
+    sql = text("DELETE FROM categorias WHERE id = :id")
     dados = {"id": id}
     result = db.session.execute(sql, dados)
 
@@ -92,8 +90,8 @@ def delete(id):
     
     if linhas_afetadas == 1: 
         db.session.commit()
-        return f"marcas com o ID {id} foi removida"
+        return f"categoria com o ID {id} foi removida"
     else:
         db.session.rollback()
         return f"apagou o que não devia"
-#deletei item 5 do teste put
+
