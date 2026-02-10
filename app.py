@@ -8,6 +8,7 @@ from control.marca import marca_bp
 from control.usuario import usuario_bp
 from control.categoria import categoria_bp
 from control.cor import cor_bp
+from control.maquina import maquina_bp
 
 
 
@@ -24,6 +25,7 @@ app.register_blueprint(marca_bp)
 app.register_blueprint(usuario_bp)
 app.register_blueprint(categoria_bp)
 app.register_blueprint(cor_bp)
+app.register_blueprint(maquina_bp)
 
 
 
