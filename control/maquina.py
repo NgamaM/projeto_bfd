@@ -101,3 +101,22 @@ def atualizar(id):
     else:
         db.session.rollback()
         return f"problemas ao atualizar dados"
+# o PUT não foi testado
+
+@maquina_bp.route("/id", methods=["DELETE"])
+def delete(id):
+    sql = text("DELETE FROM maquinas WHERE id = :id")
+    dados = {"id": id}
+    result = db.session.execute(sql, dados)
+
+
+    linhas_afetadas = result.rowcount #conta quantas linhas foram afetadas
+    
+    if linhas_afetadas == 1: 
+        db.session.commit()
+        return f"maquina com o ID {id} foi removida."
+    else:
+        db.session.rollback()
+        return f"item não encontrado."
+
+# delete não foi testado    
