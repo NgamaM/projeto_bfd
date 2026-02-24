@@ -9,7 +9,7 @@ db = SQLAlchemy()
 
 
 def init_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:123@localhost/projeto'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:123@localhost/projeto_bfd'
 
 
     db.init_app(app)

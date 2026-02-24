@@ -10,14 +10,14 @@ peca_bp = Blueprint('peca', __name__, url_prefix = '/peca')
 @peca_bp.route("/criar", methods=["POST"])
 def post_criar():
     nome = request.form.get("nome")
-    sku = request.form.get("sku")
+    sku = request.form.get("sku") #Unidade de Manutenção de Estoque - identificar peça
     preco = request.form.get("preço")
     fabricante = request.form.get("fabricante")
     id_marca = request.form.get("id_marca")
     id_categoria = request.form.get("id_categoria")
 
 
-    sql = text("INSERT INTO peças (nome_peças, sku, preco, fabricante, id_marca, id_categoria) VALUES (:nome, :sku, :preco, :fabricante, :id_marca, :id_categoria) RETURNING id")
+    sql = text("INSERT INTO pecas (nome, sku, preco, fabricante, id_marca, id_categoria) VALUES (:nome, :sku, :preco, :fabricante, :id_marca, :id_categoria) RETURNING id")
     dados = {"nome": nome, "sku": sku, "preco": preco, "fabricante": fabricante, "id_marca": id_marca, "id_categoria": id_categoria}
 
     result = db.session.execute(sql, dados)
@@ -30,7 +30,7 @@ def post_criar():
 
 @peca_bp.route("/ver", methods=["GET"])
 def get_ver():
-    sql_query = text("SELECT * FROM peças ") 
+    sql_query = text("SELECT * FROM pecas ") 
     
     try:
         #result sem dados
