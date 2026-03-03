@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 from conf.database import db
 
-maquina_bp = Blueprint('maquina', __name__, url_prefix = '/maquina')
+maquina_bp = Blueprint('maquina', __name__, url_prefix='/maquina')
 
-#CRUD
-#relacao entre maquinas e marcas, categorias, cores
+# CRUD
+# relacao entre maquinas e marcas, categorias, cores
+
 
 @maquina_bp.route("/criar", methods=["POST"])
 def post_criar():
@@ -20,7 +21,8 @@ def post_criar():
     id_cor = request.form.get("id_cor")
 
     sql = text("INSERT INTO maquinas (nome_modelo, potencia_cv, ano_modelo, peso_kg, id_marca, id_categoria, id_cor) VALUES (:nome, :potencia, :ano, :peso, :id_marca, :id_categoria, :id_cor) RETURNING id")
-    dados = {"nome": nome, "potencia": potencia, "ano": ano, "peso": peso, "id_marca": id_marca, "id_categoria": id_categoria, "id_cor": id_cor}
+    dados = {"nome": nome, "potencia": potencia, "ano": ano, "peso": peso,
+             "id_marca": id_marca, "id_categoria": id_categoria, "id_cor": id_cor}
 
     result = db.session.execute(sql, dados)
     db.session.commit()
@@ -30,53 +32,76 @@ def post_criar():
 
     return dados
 
+
 @maquina_bp.route("/ver", methods=["GET"])
 def get_ver():
-    sql_query = text("SELECT * FROM maquinas ") 
-    
-    try:
-        #result sem dados
-        result = db.session.execute(sql_query)
-                
-        relatorio = result.mappings().all()
-        json = [dict(row) for row in relatorio] #Gambi pq cada linha é um objeto
+    sql_query = text("SELECT * FROM maquinas ")
 
+    try:
+        # result sem dados
+        result = db.session.execute(sql_query)
+
+        relatorio = result.mappings().all()
+        # Gambi pq cada linha é um objeto
+        json = [dict(row) for row in relatorio]
 
         print(json)
 
-
         return json
     except Exception as e:
-        
-        #salvar log da aplicação 
-        #Mandar email programador
+
+        # salvar log da aplicação
+        # Mandar email programador
         return e
+
+
+@maquina_bp.route("/<int:id>", methods=["GET"])
+def get_maquina_id(id):
+    sql_query = text("SELECT * FROM maquinas WHERE id = :id ")
+
+    try:
+        # result sem dados
+        result = db.session.execute(sql_query)
+        maquina = result.mappings().first()  # retorna a primeira linha
+
+        if not maquina:
+            return {"erro": "maquina ou peça não encontrada"}, 404
+
+        return dict(maquina), 200
+
+    except Exception as e:
+        return {"erro": str(e)}, 500
+
+        # salvar log da aplicação
+        # Mandar email programador
+
 
 @maquina_bp.route("/relatorio", methods=["GET"])
 def get_relatorio():
-    sql_query = text("select * from maquinas m inner join marcas mc on mc.id = m.id_marca  ") 
-    
-    try:
-        #result sem dados
-        result = db.session.execute(sql_query)
-                
-        relatorio = result.mappings().all()
-        json = [dict(row) for row in relatorio] #Gambi pq cada linha é um objeto
+    sql_query = text(
+        "select * from maquinas m inner join marcas mc on mc.id = m.id_marca  ")
 
+    try:
+        # result sem dados
+        result = db.session.execute(sql_query)
+
+        relatorio = result.mappings().all()
+        # Gambi pq cada linha é um objeto
+        json = [dict(row) for row in relatorio]
 
         print(json)
 
-
         return json
     except Exception as e:
-        
-        #salvar log da aplicação 
-        #Mandar email programador
+
+        # salvar log da aplicação
+        # Mandar email programador
         return e
+
 
 @maquina_bp.route("/<id>", methods=["PUT"])
 def atualizar(id):
-    #dados que vieram postman
+    # dados que vieram postman
     nome = request.form.get("nome")
     potencia = request.form.get("potencia")
     ano = request.form.get("ano")
@@ -85,17 +110,14 @@ def atualizar(id):
     id_categoria = request.form.get("id_categoria")
     id_cor = request.form.get("id_cor")
 
-
     sql = text("UPDATE maquinas SET nome_modelo = :nome WHERE id = :id")
-    dados = {"nome": nome, "id": id} #os dados que veio do bd sql
-
+    dados = {"nome": nome, "id": id}  # os dados que veio do bd sql
 
     result = db.session.execute(sql, dados)
 
+    linhas_afetadas = result.rowcount  # conta quantas linhas foram afetadas
 
-    linhas_afetadas = result.rowcount #conta quantas linhas foram afetadas
-    
-    if linhas_afetadas == 1: 
+    if linhas_afetadas == 1:
         db.session.commit()
         return f"informações de maquinas com o ID foram {id} atualizadas"
     else:
@@ -103,20 +125,20 @@ def atualizar(id):
         return f"problemas ao atualizar dados"
 # o PUT não foi testado
 
+
 @maquina_bp.route("/id", methods=["DELETE"])
 def delete(id):
     sql = text("DELETE FROM maquinas WHERE id = :id")
     dados = {"id": id}
     result = db.session.execute(sql, dados)
 
+    linhas_afetadas = result.rowcount  # conta quantas linhas foram afetadas
 
-    linhas_afetadas = result.rowcount #conta quantas linhas foram afetadas
-    
-    if linhas_afetadas == 1: 
+    if linhas_afetadas == 1:
         db.session.commit()
         return f"maquina com o ID {id} foi removida."
     else:
         db.session.rollback()
         return f"item não encontrado."
 
-# delete não foi testado    
+# delete não foi testado
